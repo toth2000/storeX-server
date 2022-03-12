@@ -3,6 +3,7 @@ const express = require("express");
 const {
   verifyTokenAdminAuthorization,
   verifyTokenAuthorization,
+  verifyToken,
 } = require("../middleware/auth");
 
 const {
@@ -24,7 +25,7 @@ router.post("/", verifyTokenAuthorization, createOrder);
 
 router.get(
   "/:id",
-  verifyTokenAuthorization,
+  verifyToken,
   verifyOderRequest,
   getCurrentUserSpecificOrder
 );
