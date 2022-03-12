@@ -31,7 +31,6 @@ app.get("/", (req, res) => {
   res.send("StoreX Server Running");
 });
 
-
 console.log("Env file check");
 console.log("MongoUrl", process.env.MongoUrl);
 console.log("PASS_SALT", process.env.PASS_SALT);
@@ -39,12 +38,16 @@ console.log("JWT_SALT", process.env.JWT_SALT);
 console.log("razorpay_id", process.env.razorpay_id);
 console.log("razorpay_secret", process.env.razorpay_secret);
 
-// mongoose
-//   .connect(process.env.MongoURL, {
-//     useNewUrlParser: true,
-//     useUnifiedTopology: true,
-//   })
-//   .then(() =>
-//     app.listen(PORT, () => console.log(`Server is Running at Port: ${PORT}`))
-//   )
-//   .catch((error) => console.log("Error connecting to the database: ", error));
+const mongoUrl = process.env.MongoUrl;
+
+console.log("\n\nMongo Url: ", mongoUrl, "\nType: ", typeof mongoUrl);
+
+mongoose
+  .connect(mongoUrl, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() =>
+    app.listen(PORT, () => console.log(`Server is Running at Port: ${PORT}`))
+  )
+  .catch((error) => console.log("Error connecting to the database: ", error));
