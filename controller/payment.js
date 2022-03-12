@@ -6,9 +6,13 @@ const Order = require("../models/Order");
 
 dotenv.config();
 
+const key_id = process.env.razorpay_id;
+const key_secret = process.env.razorpay_secret;
+const razorpay_secret = process.env.razorpay_secret;
+
 const razorpayInstance = new Razorpay({
-  key_id: process.env.razorpay_id,
-  key_secret: process.env.razorpay_secret,
+  key_id: key_id,
+  key_secret: key_secret,
 });
 
 /** Get specific payment detail using payment id */
@@ -29,13 +33,13 @@ const getPaymentDetail = async (req, res) => {
 const verifyPayment = async (req, res) => {
   try {
     const { razorpayOrderId, razorpayPaymentId, razorpaySignature } = req.body;
-    
+
     if (!razorpayOrderId || !razorpayPaymentId || !razorpaySignature)
       return res.status(401).json({ message: "Required data is not provided" });
 
     const generatedSignature = CryptoJS.HmacSHA256(
       razorpayOrderId + "|" + razorpayPaymentId,
-      process.env.razorpay_secret
+      razorpay_secret
     ).toString();
 
     if (generatedSignature === razorpaySignature) {
