@@ -41,7 +41,7 @@ const updateUser = async (req, res) => {
     const updateUser = await User.findByIdAndUpdate(user._id, user, {
       new: true /** new is set to true for returning the update object */,
     });
-    const response = jwtSign(updateUser);
+    const response = await jwtSign(updateUser);
 
     return res.status(200).json(response);
   } catch (error) {

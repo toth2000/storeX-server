@@ -7,11 +7,14 @@ const verifyToken = (req, res, next) => {
   try {
     const authHeader = req.headers.token;
 
-    const SALT = process.env.JWT_SALT;
+    const SALT = process.env.ACCESS_TOKEN_SECRET;
 
     if (authHeader) {
       const token = authHeader.split(" ")[1];
       jwt.verify(token, SALT, (err, decodedToken) => {
+        if (err instanceof jwt.TokenExpiredError)
+          return res.status(401).json({ message: "Access Token Expired" });
+
         if (err)
           return res
             .status(403)
@@ -41,7 +44,7 @@ const verifyTokenAuthorization = (req, res, next) => {
       if (!user)
         return res.status(404).json({ message: "User does not exists" });
 
-      if (!id || (req.userId === id || user.isAdmin)) {
+      if (!id || req.userId === id || user.isAdmin) {
         req.user = user;
         next();
       } else {

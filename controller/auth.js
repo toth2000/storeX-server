@@ -1,25 +1,82 @@
 const CryptoJs = require("crypto-js");
 const jwt = require("jsonwebtoken");
+const dotenv = require("dotenv");
+
+const {
+  refresh_token_expire_time,
+  access_token_expire_time,
+} = require("../config");
 
 const User = require("../models/User");
 
-const jwtSign = (user) => {
-  const jwtSalt = process.env.JWT_SALT;
+dotenv.config();
 
-  const token = jwt.sign(
-    {
-      id: user._id,
-      isAdmin: user.isAdmin,
-    },
-    jwtSalt,
-    { expiresIn: "2d" }
+const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET;
+const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET;
+
+const jwtSign = async (user) => {
+  const refreshToken = jwt.sign({ id: user._id }, REFRESH_TOKEN_SECRET, {
+    expiresIn: refresh_token_expire_time,
+  });
+
+  const accessToken = jwt.sign({ id: user._id }, ACCESS_TOKEN_SECRET, {
+    expiresIn: access_token_expire_time,
+  });
+
+  const updatedUser = await User.findByIdAndUpdate(
+    user._id,
+    { refreshToken: refreshToken },
+    { new: true }
   );
+
+  console.log("UpdatedUser", updatedUser);
 
   // Destructing password and other from user object
   // To return user without hashed password
   const { password, ...others } = user._doc;
+  const response = { ...others, refreshToken, accessToken };
 
-  return { ...others, token };
+  return response;
+};
+
+const refreshAccessToken = (req, res) => {
+  try {
+    const token = req.body.refreshToken;
+
+    if (!token)
+      return res.status(401).json({ message: "Refresh Token Required" });
+
+    jwt.verify(token, REFRESH_TOKEN_SECRET, async (err, decodedData) => {
+      if (err instanceof jwt.TokenExpiredError)
+        return res.status(401).json({ message: "Refresh Token Expired" });
+
+      if (err)
+        return res
+          .status(403)
+          .json({ message: "Invalid token, authentication is required" });
+
+      const userId = decodedData.id;
+
+      const user = await User.findById(userId);
+
+      if (!user)
+        return res.status(404).json({ message: "User doesn't exists" });
+
+      console.log("User", user);
+
+      if (!user.refreshToken || user.refreshToken !== token)
+        return res.status(401).json({ message: "Login Required" });
+
+      const newAccessToken = jwt.sign({ id: user._id }, ACCESS_TOKEN_SECRET, {
+        expiresIn: access_token_expire_time,
+      });
+
+      return res.status(200).json({ accessToken: newAccessToken });
+    });
+  } catch (error) {
+    console.log("auth.js controlled, refreshAccessToken function ", error);
+    return res.status(500).json({ message: "Server Error" });
+  }
 };
 
 const registerUser = async (req, res) => {
@@ -50,7 +107,7 @@ const registerUser = async (req, res) => {
     });
 
     const savedUser = await newUser.save();
-    const response = jwtSign(savedUser);
+    const response = await jwtSign(savedUser);
 
     return res.status(200).json(response);
   } catch (error) {
@@ -81,7 +138,7 @@ const loginUser = async (req, res) => {
     if (decryptedPassword !== password)
       return res.status(406).json({ message: "Invalid password or username" });
 
-    const response = jwtSign(user);
+    const response = await jwtSign(user);
 
     return res.status(200).json(response);
   } catch (error) {
@@ -90,4 +147,4 @@ const loginUser = async (req, res) => {
   }
 };
 
-module.exports = { registerUser, loginUser, jwtSign };
+module.exports = { registerUser, loginUser, jwtSign, refreshAccessToken };
