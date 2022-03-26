@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const Order = require("../models/Order");
 const Product = require("../models/Product");
 const { razorpayInstance } = require("./payment");
+const { sendOrderConfirmationEmail } = require("../helper/email/email");
 
 /** Create a new order */
 const createOrder = async (req, res) => {
@@ -54,6 +55,8 @@ const createOrder = async (req, res) => {
     });
 
     const savedOrder = await order.save();
+    sendOrderConfirmationEmail(savedOrder, req.user);
+
     return res.status(200).json(savedOrder);
   } catch (err) {
     console.log("order.js controller, createOrder\n", err);

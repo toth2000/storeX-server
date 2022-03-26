@@ -10,7 +10,6 @@ const productRoute = require("./routes/product");
 const cartRoute = require("./routes/cart");
 const orderRoute = require("./routes/order");
 const paymentRoute = require("./routes/payment");
-const emailRoute = require("./routes/email");
 
 const app = express();
 dotenv.config();
@@ -27,7 +26,6 @@ app.use("/product", productRoute);
 app.use("/cart", cartRoute);
 app.use("/order", orderRoute);
 app.use("/payment", paymentRoute);
-app.use("/email", emailRoute);
 
 app.get("/", (req, res) => {
   res.send("StoreX Server Running");

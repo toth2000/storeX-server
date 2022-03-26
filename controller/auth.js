@@ -62,8 +62,6 @@ const refreshAccessToken = (req, res) => {
       if (!user)
         return res.status(404).json({ message: "User doesn't exists" });
 
-      console.log("User", user);
-
       if (!user.refreshToken || user.refreshToken !== token)
         return res.status(401).json({ message: "Login Required" });
 

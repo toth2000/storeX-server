@@ -3,6 +3,7 @@ const dotenv = require("dotenv");
 const CryptoJS = require("crypto-js");
 
 const Order = require("../models/Order");
+const { sendPaymentEmail } = require("../helper/email/email");
 
 dotenv.config();
 
@@ -53,6 +54,8 @@ const verifyPayment = async (req, res) => {
         },
         { new: true }
       );
+
+      sendPaymentEmail(order, req.user);
 
       return res
         .status(200)
