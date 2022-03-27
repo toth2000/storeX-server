@@ -313,7 +313,7 @@ const oderConfirmationEmailTemplate = async (order) => {
                 <table cellpadding="0" cellspacing="0" width="600" class="w320">
                   <tr>
                     <td class="pull-left mobile-header-padding-left" style="vertical-align: middle;">
-                      <a href=""><img width="100%" height="60" object-fit="cover" src=${logo} alt="logo"></a>
+                      <a href=""><img width="100%" height="60" style="object-fit: cover" src=${logo} alt="logo"></a>
                     </td>
                     <td class="pull-right mobile-header-padding-right" style="color: #4d4d4d;">
                       <a href=""><img width="44" height="47" src="http://s3.amazonaws.com/swu-filepicker/k8D8A7SLRuetZspHxsJk_social_08.gif" /></a>
