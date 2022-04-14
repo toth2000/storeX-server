@@ -12,7 +12,6 @@ const transporter = nodemailer.createTransport({
   auth: {
     type: "OAuth2",
     user: "tothagatab@gmail.com",
-    pass: "ironman262208",
     clientId: O_AUTH_CLIENT_ID,
     clientSecret: O_AUTH_SECRET,
     refreshToken: EMAIL_REFRESH_TOKEN,
