@@ -2,7 +2,7 @@
 
 This is the backend server repository of StoreX, a complete full-stack online shopping website with payment gateway integration.
 
-Website: https://store-x-website.vercel.app/
+Website: https://store-x-website.vercel.app/ <br>
 Backend Server Link: https://store-x-backend.onrender.com/
 
 ---
