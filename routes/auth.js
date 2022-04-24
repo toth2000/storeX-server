@@ -1,5 +1,9 @@
 const express = require("express");
-const { registerUser, loginUser, refreshAccessToken } = require("../controller/auth");
+const {
+  registerUser,
+  loginUser,
+  refreshAccessToken,
+} = require("../controller/auth");
 
 const router = express.Router();
 
@@ -12,6 +16,6 @@ router.post("/register", registerUser);
 router.post("/login", loginUser);
 
 //Access Token Refresh Route
-router.post('/refresh_token', refreshAccessToken)
+router.post("/refresh_token", refreshAccessToken);
 
 module.exports = router;
