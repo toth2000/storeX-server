@@ -123,7 +123,9 @@ const loginUser = async (req, res) => {
         .status(400)
         .json({ message: "username and password are required" });
 
-    const user = await User.findOne({ username: username });
+    const user = await User.findOne({
+      $or: [{ email: username }, { username: username }],
+    });
 
     if (!user) return res.status(404).json({ message: "User does not exists" });
 
